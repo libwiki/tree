@@ -1,0 +1,15 @@
+{
+    "name": "wschat/tree",
+    "authors": [
+        {
+            "name": "wschat",
+            "email": "779838547@qq.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload":{
+        "files":["util.php"],
+        "classmap":["src"]
+    }
+}
