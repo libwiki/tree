@@ -14,6 +14,12 @@ $data=[
     ['id'=>8,'name'=>'H','pid'=>4],
 ];
 $tree->init($data);
+
+$isComplete=$tree->isComplete($tree['root'])?'是':'否';
+$isFull=$tree->isFull($tree['root'])?'是':'否';
+p('','isComplete() 是否完全二叉树： '.$isComplete,1);
+p('','isFull() 是否满二叉树： '.$isFull,1);
+
 p('','getDepth() 获取深度为： '.$tree->getDepth($tree['root']['left']),1);
 p('','getHeight() 获取当前节点高度(最高的那一边)为：  '.$tree->getHeight($tree['root']),1);
 p('','getMinHeight() 获取当前节点高度(最低的那一边)为： '.$tree->getMinHeight($tree['root']));
@@ -35,8 +41,13 @@ $tree->inOrder($tree['root'],function($item){
 p('');
 
 echo "<br>后序遍历演示：";
-$count=null;
 $tree->preOrder($tree['root'],function($item)use(&$count){
     echo '<br>ItemValue：'.$item['value']['name'];
-    $count++;
+});
+p('');
+
+echo '<br>上下左右遍历(层层遍历)演示：（这里的参数与另三个遍历参数有区别主要为了应用于$tree->isComplete()方法中）';
+
+$tree->levelOrder($tree['root'],function($item)use(&$count){
+    echo '<br>ItemValue：'.$item['value']['name'];
 });

@@ -44,14 +44,15 @@ class Tree implements \ArrayAccess{
      * 插入新节点(公排|弱区)
      * @param  mixed $key  插入的值
      * @param  Node $node  节点的实例
+     * @param  boolean $natural 默认：false 是否自然排序(公排 从上到下 左到右) 默认为平衡排列(优选弱区)
      * @return Node
      */
-    function insert($key,$node=null){
+    function insert($key,$node=null,$natural=false){
         $newNode=new Node($key);
         if(is_null($node)){
             $node=$this->root;
         }
-        $rs=$this->insertable($node,false);
+        $rs=$this->insertable($node,$natural);
         if(!$rs){
             $this->root=$newNode;
         }else{
@@ -68,7 +69,7 @@ class Tree implements \ArrayAccess{
      * 查询可插入的节点信息(公排|弱区)
      * 通常作为插入用户时获取新用户的父节点
      * @param  Node $node 节点的实例
-     * @param  boolean $natural 是否自然排序(公排 从上到下 左到右) 默认为平衡排列(优选弱区)
+     * @param  boolean $natural 默认：false 是否自然排序(公排 从上到下 左到右) 默认为平衡排列(优选弱区)
      * @return array      [node,position]
      */
     function insertable($node,$natural=false,$rootNode=null){
@@ -169,7 +170,7 @@ class Tree implements \ArrayAccess{
             }
             if(!$breakPoint){
                 $parent=$item->parent;
-                if(is_null($parent->right)){
+                if(!isset($parent['right'])||is_null($parent['right'])){
                     $breakNode=$parent;
                 }else{
                     $parent=$parent->parent;
@@ -290,7 +291,7 @@ class Tree implements \ArrayAccess{
      * @param  Node $node       初始节点的实例
      * @return void
      */
-    function levelOrder(Node $node,$callback){
+    function levelOrder($node,$callback){
         $queue=[$node];
         call_user_func($callback,$node);
         $parent=array_shift($queue);
