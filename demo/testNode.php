@@ -1,5 +1,5 @@
 <?php
-use tree\Node;
+use wstree\Node;
 require '../vendor/autoload.php';
 p('Node 类仅做辅助作用 生成节点类');
 $node = new Node('root');

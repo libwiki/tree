@@ -1,5 +1,5 @@
 <?php
-namespace tree;
+namespace wstree;
 class Node implements \ArrayAccess{
     public $value=null;
     public $parent=null;

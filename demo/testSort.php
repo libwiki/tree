@@ -1,7 +1,6 @@
 <?php
-use tree\Tree;
+use wstree\Tree;
 require '../vendor/autoload.php';
-$tree=new Tree();
 $data=[
     ['id'=>1,'name'=>'A','pid'=>0],
     ['id'=>2,'name'=>'B','pid'=>1],
@@ -25,16 +24,14 @@ p('','以下演示Tree类提供的两个排序辅助方法');
  * @return array
  */
 shuffle($data); // 打乱数组
-$result=$tree->levelSort($data,0,'pid');
+$result=Tree::levelSort($data,0,'pid');
 /**
  * 子集个数统计（直属下级）(会增加数组字段‘_childrens’)
  * @param  array   $arr     统计数据
  * @param  string  $pidKey  父级ID 键名
  * @return array
- * 该方法原为私有方法，故有个限制（$result根节点必须必须为数组首位）
- * 该方法与对于levelSort排序没有任何作用
  */
-$result=$tree->_childrens($result,'pid');
+$result=Tree::_childrens($data,'pid');
 p($result,'_childrens()、levelSort() 演示 该方法在 Tree类中实际并未使用');
 
 
@@ -53,6 +50,6 @@ p($result,'_childrens()、levelSort() 演示 该方法在 Tree类中实际并未
 shuffle($data); // 打乱数组
 $result=[];
 $options=['pid'=>0,'sort'=>true,'level'=>0,'pidKey'=>'pid'];
-$tree->preSort($data,$result,$options=[]);
+Tree::preSort($data,$result,$options=[]);
 
 p($result,'levelSort 演示 该方法在 Tree类init()方法中使用');

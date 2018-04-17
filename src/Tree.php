@@ -1,5 +1,5 @@
 <?php
-namespace tree;
+namespace wstree;
 class Tree implements \ArrayAccess{
     public $root=null;
     public $current=null;
@@ -354,7 +354,7 @@ class Tree implements \ArrayAccess{
      * @param  string  $pidKey  父级ID 键名
      * @return array
      */
-    function levelSort($data,$pid=0,$pidKey='pid'){
+    static function levelSort($data,$pid=0,$pidKey='pid'){
         $arr=[];
         $ids=[$pid];
         while(!empty($ids)){
@@ -389,7 +389,7 @@ class Tree implements \ArrayAccess{
      * @return array
      * $options=[$pid=0,$sort=true,$level=0,$pidKey='pid'];
      */
-    function preSort($array,&$data,$options=[],$isFirst=true){
+    static function preSort($array,&$data,$options=[],$isFirst=true){
         if($isFirst){
             $pidKey=isset($options['pidKey'])?$options['pidKey']:'pid';
             $options=array_merge([$pidKey=>0,'sort'=>true,'level'=>0,'pidKey'=>'pid'],$options);
@@ -410,7 +410,7 @@ class Tree implements \ArrayAccess{
     			$data[]=$v;
                 $options[$pidKey]=$v['id'];
                 $options['level']++;
-    			$this->preSort($array,$data,$options,false);
+    			self::preSort($array,$data,$options,false);
     		}
     	}
     }
@@ -420,7 +420,7 @@ class Tree implements \ArrayAccess{
      * @param  string  $pidKey  父级ID 键名
      * @return array
      */
-    function _childrens($arr,$pidKey='pid'){
+    static function _childrens($arr,$pidKey='pid'){
         foreach ($arr as $k => $v) {
             $_childrens=0;
             $id=$v['id'];

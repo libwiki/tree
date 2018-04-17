@@ -1,5 +1,5 @@
 <?php
-use tree\Tree;
+use wstree\Tree;
 require '../vendor/autoload.php';
 $tree=new Tree();
 
