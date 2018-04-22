@@ -13,7 +13,7 @@ $data=[
 ];
 
 
-p('','以下演示Tree类提供的两个排序辅助方法');
+p('','以下演示Tree类提供的三个排序辅助方法 levelSort()、preSort()在Tree类中并未使用');
 
 /**
  * 从上到下 从左到右的排序(层层排序)
@@ -32,7 +32,7 @@ $result=Tree::levelSort($data,0,'pid');
  * @return array
  */
 $result=Tree::_childrens($data,'pid');
-p($result,'_childrens()、levelSort() 演示 该方法在 Tree类中实际并未使用');
+p($result,'_childrens()、levelSort() 演示 ');
 
 
 
@@ -52,4 +52,4 @@ $result=[];
 $options=['pid'=>0,'sort'=>true,'level'=>0,'pidKey'=>'pid'];
 Tree::preSort($data,$result,$options=[]);
 
-p($result,'levelSort 演示 该方法在 Tree类init()方法中使用');
+p($result,'preSort() 演示 ');

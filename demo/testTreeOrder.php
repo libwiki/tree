@@ -28,26 +28,26 @@ echo '<br>下列中$item 是 Node 的实例<br>';
 echo "<br>先序遍历演示()：";
 $count=null;
 $tree->preOrder($tree['root'],function($item)use(&$count){
-    echo '<br>ItemValue：'.$item['value']['name'];
+    echo "<br>\$item['value']['name']：".$item['value']['name'];
     $count++;
 });
-p('','$count 是演示一些额外的扩展 这里是统计树的总节点为： '.$count);
+p('','$count 是演示一些额外的扩展 这里是统计树的总节点为$count： '.$count);
 
 
 echo "<br>中序遍历演示：";
 $tree->inOrder($tree['root'],function($item){
-    echo '<br>ItemValue：'.$item['value']['name'];
+    echo '<br>'.$item['value']['name'];
 });
 p('');
 
 echo "<br>后序遍历演示：";
-$tree->preOrder($tree['root'],function($item)use(&$count){
-    echo '<br>ItemValue：'.$item['value']['name'];
+$tree->preOrder($tree['root'],function($item){
+    echo '<br>'.$item['value']['name'];
 });
 p('');
 
 echo '<br>上下左右遍历(层层遍历)演示：（这里的参数与另三个遍历参数有区别主要为了应用于$tree->isComplete()方法中）';
 
-$tree->levelOrder($tree['root'],function($item)use(&$count){
-    echo '<br>ItemValue：'.$item['value']['name'];
+$tree->levelOrder($tree['root'],function($item){
+    echo '<br>'.$item['value']['name'];
 });

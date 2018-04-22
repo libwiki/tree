@@ -3,43 +3,50 @@ namespace wstree;
 class Tree implements \ArrayAccess{
     public $root=null;
     public $current=null;
+
     /**
-     * 插入$root下节点 通常是初始化树
-     * 插入前应先进行排序 按从上到下、左到右的方式排序 参考 Format->preSort()
-     * @param  array   $data 用户插入数据
+     * 初始化一个二叉树
+     * @param  array   $array 用户数据
+     * @param  array   $options 额外参数
+     * @param  Node    $parent 起始节点
      * @param  integer $pid  起始pid
      * @param  boolean  $sort   是否先进行按主键值的排序
      * @param  integer  $level  级别默认为0 不建议传递
      * @param  string   $pidKey  父级ID 键名
-     * @return Tree||null 返回自身或者null
+     * @return array
      * $options=[$pid=0,$sort=true,$level=0,$pidKey='pid'];
      */
-     function init($data,$options=[]){
-         if(empty($data)){
-             return;
-         }
-         $list=[];
-         $this->preSort($data,$list,$options);
-         $list=$this->_childrens($list);
-         $rs=null;
-         foreach ($list as $k => $v) {
-             if(!$rs){
-                 $rs=$this->tree($v);
-             }else{
-                 if($v['_childrens']){
-                     $rs->tree($v);
-                 }else{
-                     $rs->leaf($v);
-                 }
-                 $nextKey=$k+1;
-                 if(!isset($list[$nextKey])||$list[$nextKey]['_level']<$v['_level']){
-                     $rs->end();
-                 }
-
-             }
-         }
-         return $rs;
-     }
+    function init($array,$options=[],$parent=null,$isFirst=true){
+        if($isFirst){
+            $pidKey=isset($options['pidKey'])?$options['pidKey']:'pid';
+            $options=array_merge([$pidKey=>0,'sort'=>true,'level'=>0,'pidKey'=>'pid'],$options);
+            $array=$this->_childrens($array);
+        }
+        $options['level']++;
+        extract($options);
+        if($sort){
+            // 排序 待进行
+            usort($array,function($a,$b){
+                return $a['id']>$b['id']?1:-1;
+            });
+            $options['sort']=false;
+        }
+    	foreach($array as $v){
+    		if($v[$pidKey]==$pid){
+                $v['_level']=$level;
+    			$node=new Node($v);
+                if(is_null($parent)){
+                    $this->root=$node;
+                }elseif(is_null($parent['left'])){
+                    $parent['left']=$node;
+                }else{
+                    $parent['right']=$node;
+                }
+                $options[$pidKey]=$v['id'];
+    			$this->init($array,$options,$node,false);
+    		}
+    	}
+    }
     /**
      * 插入新节点(公排|弱区)
      * @param  mixed $key  插入的值
@@ -88,7 +95,6 @@ class Tree implements \ArrayAccess{
             $l_height=$this->getHeight($node['left']);
             $r_height=$this->getHeight($node['right']);
         }
-
         if($r_height<$l_height){
             if(is_null($node['right'])){
                 return $node;
@@ -403,11 +409,11 @@ class Tree implements \ArrayAccess{
             });
             $options['sort']=false;
         }
-        //$nbsp='&nbsp;';
+        $nbsp='&nbsp;';
     	foreach($array as $v){
     		if($v[$pidKey]==$pid){
                 $v['_level']=$level;
-    			//$v['_prefix']=str_pad('',$level*strlen($nbsp)*8,$nbsp);
+    			$v['_prefix']=str_pad('',$level*strlen($nbsp)*8,$nbsp);
     			$data[]=$v;
                 $options[$pidKey]=$v['id'];
                 $options['level']++;
@@ -415,6 +421,7 @@ class Tree implements \ArrayAccess{
     		}
     	}
     }
+
     /**
      * 子集个数统计（直属下级）
      * @param  array   $arr     统计数据

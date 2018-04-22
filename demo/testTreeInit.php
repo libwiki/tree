@@ -16,4 +16,4 @@ $data=[
 shuffle($data);
 $tree->init($data);
 p('Tree 类存在两个属性 $root（根节点实例）、$current（当前指针节点实例）');
-p($tree['root'],'这是通过一个多行数据生成二叉树的例子、结果与testTree生成的树是一样的');
+p($tree['root'],'这是通过init() 多行数据生成二叉树的例子、结果与testTree生成的树是一样的(init()是通过preSort()改进而来)');
