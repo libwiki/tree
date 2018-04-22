@@ -5,11 +5,11 @@ class Node implements \ArrayAccess{
     public $parent=null;
     public $left=null;
     public $right=null;
-    function toArray(){
-        return (array)$this;
-    }
     function __construct($key){
         $this->value=$key;
+    }
+    function toArray(){
+        return (array)$this;
     }
     // 私有化扩展 待定
     function __set($key,$value){

@@ -20,12 +20,12 @@ $isFull=$tree->isFull($tree['root'])?'是':'否';
 p('','isComplete() 是否完全二叉树： '.$isComplete,1);
 p('','isFull() 是否满二叉树： '.$isFull,1);
 
-p('','getDepth() 获取深度为： '.$tree->getDepth($tree['root']['left']),1);
+p('','getDepth() 获取深度为： '.$tree->getDepth($tree['root']['right']),1);
 p('','getHeight() 获取当前节点高度(最高的那一边)为：  '.$tree->getHeight($tree['root']),1);
 p('','getMinHeight() 获取当前节点高度(最低的那一边)为： '.$tree->getMinHeight($tree['root']));
 
 echo '<br>下列中$item 是 Node 的实例<br>';
-echo "<br>先序遍历演示()：";
+echo "<br>preOrder()先序遍历演示：";
 $count=null;
 $tree->preOrder($tree['root'],function($item)use(&$count){
     echo "<br>\$item['value']['name']：".$item['value']['name'];
@@ -34,13 +34,13 @@ $tree->preOrder($tree['root'],function($item)use(&$count){
 p('','$count 是演示一些额外的扩展 这里是统计树的总节点为$count： '.$count);
 
 
-echo "<br>中序遍历演示：";
+echo "<br>inOrder()中序遍历演示：";
 $tree->inOrder($tree['root'],function($item){
     echo '<br>'.$item['value']['name'];
 });
 p('');
 
-echo "<br>后序遍历演示：";
+echo "<br>postOrder()后序遍历演示：";
 $tree->preOrder($tree['root'],function($item){
     echo '<br>'.$item['value']['name'];
 });

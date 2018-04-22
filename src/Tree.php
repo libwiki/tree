@@ -20,7 +20,7 @@ class Tree implements \ArrayAccess{
         if($isFirst){
             $pidKey=isset($options['pidKey'])?$options['pidKey']:'pid';
             $options=array_merge([$pidKey=>0,'sort'=>true,'level'=>0,'pidKey'=>'pid'],$options);
-            $array=$this->_childrens($array);
+            $array=$this->childrens($array);
         }
         $options['level']++;
         extract($options);
@@ -38,8 +38,10 @@ class Tree implements \ArrayAccess{
                 if(is_null($parent)){
                     $this->root=$node;
                 }elseif(is_null($parent['left'])){
+                    $node['parent']=$parent;
                     $parent['left']=$node;
                 }else{
+                    $node['parent']=$parent;
                     $parent['right']=$node;
                 }
                 $options[$pidKey]=$v['id'];
@@ -140,24 +142,16 @@ class Tree implements \ArrayAccess{
      * @param  boolean  $getNode 当前节点
      * @return boolean
      */
-    function isFull($node=null,$getNode=false){
+    function isFull($node=null){
         if(is_null($node)){
             $node=$this->root;
         }
         $length=0;
-        $parent=null;
-        $this->preOrder($node,function($item)use(&$length,&$parent,$getNode){
+        $this->preOrder($node,function($item)use(&$length){
             $length++;
-            if($getNode&&is_null($item->left)){
-                $parent=$item->parent;
-            }
         });
         $height=$this->getHeight($node);
-        $isFull=$length===pow(2,$height)-1;
-        if($getNode){
-            return $isFull?null:$parent;
-        }
-        return $isFull;
+        return $length===pow(2,$height)-1;
     }
     /**
      * 是否完全二叉树
@@ -234,7 +228,7 @@ class Tree implements \ArrayAccess{
     /**
      * 设置一个节点
      * @param  mixed $key  需要设置的值
-     * @return Tree 返回current指向$key生成的节点（当前节点）的当前类
+     * @return self 返回current指向$key生成的节点（当前节点）的当前类
      */
     function tree($key){
         $node=new Node($key);
@@ -254,7 +248,7 @@ class Tree implements \ArrayAccess{
     /**
      * 设置一个叶节点(如果这是第一个则与tree()作用相同)
      * @param  mixed $key  需要设置的值
-     * @return Tree 返回current指向当前节点父级的当前类
+     * @return self 返回current指向当前节点父级的当前类
      */
     function leaf($key){
         if(is_null($this->root)||is_null($this->current)){
@@ -266,7 +260,7 @@ class Tree implements \ArrayAccess{
     }
     /**
      * 返回指向上级节点(根节点返回的依然是根节点)的当前类
-     * @return Tree 返回current指向父级的父级类
+     * @return self 返回current指向父级的父级类
      */
     function end(){
         $current=$this->current;
@@ -276,17 +270,42 @@ class Tree implements \ArrayAccess{
         return $this;
     }
     /**
+     * 将指针指向最近的可插入节点的节点（如果均不满足则返回$this->root）
+     * @param  integer $childNums 子集数要求
+     * @return self 返回current指向$key生成的节点（当前节点）的当前类
+     */
+    function closest($childNums=2){
+        $current=$this->current;
+        if(!is_null($current['parent'])){
+            $parent=$current['parent'];
+            $this->current=$parent;
+            $childs=0;
+            if(!is_null($parent['left'])){
+                $childs++;
+            }
+            if(!is_null($parent['right'])){
+                $childs++;
+            }
+            if($childNums<=0||$childs<$childNums){
+                return $this;
+            }else{
+                return $this->end();
+            }
+        }
+
+    }
+    /**
      * 增加一个节点(tree()、leaf()的助手方法)
      * @param Node $node 节点的实例
      */
     private function _addNode($node){
         $current=$this->current;
+        $node['parent']=$this->current;
         if(is_null($current['left'])){
             $this->current->left=$node;
         }else{
             $this->current->right=$node;
         }
-        $node['parent']=$this->current;
     }
 
 
@@ -354,38 +373,6 @@ class Tree implements \ArrayAccess{
         }
     }
     /**
-     * 从上到下 从左到右的排序(层层排序)
-     * @param  array   $data 用户数据
-     * @param  integer $col  列数（二叉树、三叉树、四叉树。。。）
-     * @param  integer $pid  起始pid
-     * @param  string  $pidKey  父级ID 键名
-     * @return array
-     */
-    static function levelSort($data,$pid=0,$pidKey='pid'){
-        $arr=[];
-        $ids=[$pid];
-        while(!empty($ids)){
-            $pid=array_shift($ids);
-            $rs=array_filter($data,function($item) use($pid,$pidKey){
-                return $pid===$item[$pidKey]?true:false;
-            });
-            if(count($rs)>1){
-                usort($rs,function($a,$b) use(&$ids){
-                    if($a['id']>$b['id']){
-                        array_push($ids,$b['id'],$a['id']);
-                        return 1;
-                    }
-                    array_push($ids,$a['id'],$b['id']);
-                    return -1;
-                });
-            }elseif(!empty($rs)){
-                array_push($ids,end($rs)['id']);
-            }
-            $arr=array_merge($arr,$rs);
-        }
-        return $arr;
-    }
-    /**
      * 先序 排序 以及是否存在子集判断
      * @param  array   $array 用户数据
      * @param  array   $data 引用类型最终返回的数据
@@ -428,7 +415,7 @@ class Tree implements \ArrayAccess{
      * @param  string  $pidKey  父级ID 键名
      * @return array
      */
-    static function _childrens($arr,$pidKey='pid'){
+    static function childrens($arr,$pidKey='pid'){
         foreach ($arr as $k => $v) {
             $_childrens=0;
             $id=$v['id'];
