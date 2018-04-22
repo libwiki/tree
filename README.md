@@ -225,10 +225,10 @@ echo $tree->getMinHeight($tree->root); // 2;
           / \              / \             /   \               /   \  
          B   C     =>     B   C     =>    B     C     =>      B     C
 （图4） /                /    /          /  \   /            /  \   / \
-      D                D    E          D    F  E            D   F  E   G
+      D                D     E         D    F  E            D   F  E   G
 ```
 
-##### insertable($node,$natural=false) 查询可插入的节点信息(公排|弱区落位)
+##### insertable($node,$natural=false) 查询可插入的节点信息(公排 | 弱区落位)
     * $node 需要在该节点下插入 不一定是根节点 $node必须存在于树中
     * $natural false：弱区落位  true：公排（从上到下做到右 类似levelOrder()）
 
@@ -239,7 +239,7 @@ $parent=$tree->insertable($tree['root']['left']); // B
 $parent=$tree->insertable($tree['root']['right']); // E
 ```
 
-##### insert($key,$node=null,$natural=false) 插入新节点(公排|弱区落位)
+##### insert($key,$node=null,$natural=false) 插入新节点(公排 | 弱区落位)
     * $key 需要插入的值
     * $node 需要在该节点下插入 不一定是根节点 $node必须存在于树中
     * $natural false：弱区落位  true：公排（从上到下做到右 类似levelOrder()）
