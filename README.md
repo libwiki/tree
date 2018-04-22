@@ -1,6 +1,6 @@
 # PHP 二叉树 类实现
 
-> 该类 仅实现普通的二叉树 
+> 该类 仅实现普通的二叉树
 
 ```
     // 安装使用如下
@@ -250,13 +250,13 @@ $parent=$tree->insertable($tree['root']['right']); // E
 $result=$tree->insert('I',$tree['root']);
 ```
 
-### 三个扩展方法 childrens()、 levelSort()、preSort()、
+### 两个扩展方法 childrens()、 preSort()、
 
 ##### childrens($array,$pidKey='pid') 子集个数统计（直属下级），注入每一项_childrens字段(init() 中使用到)
     * array $array 一个有特定规律的二维数组
     * string $pidKey 指向父级的键名
 ```
-// 注：以下的另两个方法均以该数据为例
+// 注：以下两个方法均以该数据为例
 $data=[
     ['id'=>1,'name'=>'A','pid'=>0],
     ['id'=>2,'name'=>'B','pid'=>1],
