@@ -26,7 +26,7 @@
 
 * 关于Tree实例类的结构如下：
     * $root 包含当前树的根节点
-    * $current 包含当前树的指针（目前指针仅在于tree()、leaf()、end()方法中使用）
+    * $current 包含当前树的指针（目前指针在于tree()、leaf()、end()、closest()方法中使用）
 
 ![tree.png](./images/tree.png)
 
