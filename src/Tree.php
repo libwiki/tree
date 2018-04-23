@@ -85,31 +85,8 @@ class Tree implements \ArrayAccess{
         if(is_null($node)&&is_null($this->root)){
             return;
         }
-        if(is_null($rootNode)){ // 首次会执行该条件
-            $rootNode=$node;
-        }
         if(is_null($node['left'])||is_null($node['right'])){
             return $node;
-        }
-        $l_height=$this->getHeight($node['left']);
-        $r_height=$this->getHeight($node['right']);
-        if($r_height<$l_height){
-            return $this->insertable($node['right'],$natural,$rootNode);
-        }elseif($r_height==$l_height){
-            $is_full=$this->isFull($rootNode);
-            if($is_full){
-                return $this->insertable($node['left'],$natural,$rootNode);
-            }
-            $isComplete=$this->isComplete($rootNode);
-            if($isComplete){
-                return $this->insertable($node['right'],$natural,$rootNode);
-            }
-            return $this->insertable($node['left'],$natural,$rootNode);
-        }
-    }
-    function insertable1($node,$natural=false,$rootNode=null){
-        if(is_null($node)&&is_null($this->root)){
-            return;
         }
         if(is_null($rootNode)){ // 首次会执行该条件
             $rootNode=$node;
@@ -124,41 +101,19 @@ class Tree implements \ArrayAccess{
             $r_height=$this->getHeight($node['right']);
         }
         if($r_height<$l_height){
-            if(is_null($node['right'])){
-                return $node;
-            }
             return $this->insertable($node['right'],$natural,$rootNode);
-        }else{
-            if(is_null($node['left'])){
-                if(!$natural){
-                    $is_full=$this->isFull($rootNode);
-                    $root_l_height=$this->getHeight($rootNode['left']);
-                    $root_r_height=$this->getHeight($rootNode['right']);
-                    if($root_l_height===$root_r_height&&!$is_full){
-                        $parent=null;
-                        $l_is_full=$this->isFull($rootNode['left']);
-                        if($l_is_full){ // 加入右边
-                            $isComplete=$this->isComplete($rootNode['right'],function($item)use(&$parent){
-                                if(!is_null($item)){
-                                    $parent=$item;
-                                }
-                            });
-                        }else{ // 加入左边
-                            $isComplete=$this->isComplete($rootNode['left'],function($item)use(&$parent){
-                                if(!is_null($item)){
-                                    $parent=$item;
-                                }
-                            });
-                        }
-                        if(!is_null($parent)&&$isComplete){
-                            return $parent;
-                        }
-                     }
-                 }
-
-                return $node;
+        }elseif($r_height==$l_height){
+            if($natural){
+                return $this->insertable($node['left'],$natural,$rootNode);
             }
-
+            $is_full=$this->isFull($rootNode);
+            if($is_full){
+                return $this->insertable($node['left'],$natural,$rootNode);
+            }
+            $isComplete=$this->isComplete($rootNode);
+            if($isComplete){
+                return $this->insertable($node['right'],$natural,$rootNode);
+            }
             return $this->insertable($node['left'],$natural,$rootNode);
         }
     }
