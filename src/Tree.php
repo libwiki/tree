@@ -91,6 +91,64 @@ class Tree implements \ArrayAccess{
         if(is_null($rootNode)){ // 首次会执行该条件
             $rootNode=$node;
         }
+        $l_height=$this->getHeight($node['left']);
+        $r_height=$this->getHeight($node['right']);
+
+        if($r_height<$l_height){
+            return $this->getPos($node['right'],1);
+        }elseif($r_height==$l_height){
+            $is_full=$this->isFull($node);
+            if($is_full){ //满二叉树 最左边
+                return $this->getPos($node['left'],1);
+            }
+            $isComplete=$this->isComplete($node);
+            if($isComplete){ //完全二叉树 ROOT右边
+                return $this->getPos($node['right'],2);
+            }
+            //非完全二叉树 ROOT左边
+            return $this->getPos($node['left'],2);
+        }
+
+    }
+    private function getPos($node,$type=1){
+        if($type==1){ //最左边
+            if(is_null($node['left'])){
+                return $node;
+            }else{
+                return $this->getPos($node['left'],$type);
+            }
+        }else{
+            $is_full=$this->isFull($node['left']);
+            if(is_null($node['right'])||is_null($node['left'])){
+                return $node;
+            }
+            if($is_full){ //右边
+                if(is_null($node['right']['left'])){
+                    return $node['right'];
+                }else{
+                    return $this->getPos($node['right'],$type);
+                }
+            }else{ //最左边父级
+                if(is_null($node['left'])){
+                    return $node['parent'];
+                }else{
+                    $rs=$this->getPos($node['left'],$type);
+                    return $rs;
+                }
+            }
+
+        }
+    }
+    function insertable1($node,$natural=false,$rootNode=null){
+        if(is_null($node)&&is_null($this->root)){
+            return;
+        }
+        if(is_null($node['left'])||is_null($node['right'])){
+            return $node;
+        }
+        if(is_null($rootNode)){ // 首次会执行该条件
+            $rootNode=$node;
+        }
         $l_height=0;
         $r_height=0;
         if($natural){
