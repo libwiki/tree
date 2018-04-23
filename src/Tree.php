@@ -123,17 +123,23 @@ class Tree implements \ArrayAccess{
                 return $node;
             }
             if($is_full){ //右边
-                if(is_null($node['right']['left'])){
+                if(is_null($node['left']['left'])){
+                    return $node['left'];
+                }elseif(is_null($node['right']['left'])){
                     return $node['right'];
                 }else{
-                    return $this->getPos($node['right'],$type);
+                    $is_full=$this->isFull($node);
+                    if($is_full){
+                        return $this->getPos($node['left'],$type);
+                    }else{
+                        return $this->getPos($node['right'],$type);
+                    }
                 }
             }else{ //最左边父级
                 if(is_null($node['left'])){
                     return $node['parent'];
                 }else{
-                    $rs=$this->getPos($node['left'],$type);
-                    return $rs;
+                    return $this->getPos($node['left'],$type);
                 }
             }
 
