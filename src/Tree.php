@@ -4,6 +4,7 @@ class Tree implements \ArrayAccess{
     public $root=null;
     public $current=null;
 
+
     /**
      * 初始化一个二叉树
      * @param  array   $array 用户数据
@@ -31,10 +32,10 @@ class Tree implements \ArrayAccess{
             });
             $options['sort']=false;
         }
-        foreach($array as $v){
-            if($v[$pidKey]==$pid){
+    	foreach($array as $v){
+    		if($v[$pidKey]==$pid){
                 $v['_level']=$level;
-                $node=new Node($v);
+    			$node=new Node($v);
                 if(is_null($parent)){
                     $this->root=$node;
                 }elseif(is_null($parent['left'])){
@@ -45,9 +46,9 @@ class Tree implements \ArrayAccess{
                     $parent['right']=$node;
                 }
                 $options[$pidKey]=$v['id'];
-                $this->init($array,$options,$node,false);
-            }
-        }
+    			$this->init($array,$options,$node,false);
+    		}
+    	}
     }
     /**
      * 插入新节点(公排|弱区)
@@ -81,21 +82,21 @@ class Tree implements \ArrayAccess{
      * @param  boolean $natural 默认：false 是否自然排序(公排 从上到下 左到右) 默认为平衡排列(优选弱区)
      * @return array      [node,position]
      */
-    function insertable($node,$natural=false,$rootNode=null){
+    function insertable($node,$natural=false){
         if(is_null($node)&&is_null($this->root)){
             return;
         }
         if(is_null($node['left'])||is_null($node['right'])){
             return $node;
         }
-        if(is_null($rootNode)){ // 首次会执行该条件
-            $rootNode=$node;
+        if($natural){
+            return $this->naturalPos($node);
         }
         $l_height=$this->getHeight($node['left']);
         $r_height=$this->getHeight($node['right']);
 
         if($r_height<$l_height){
-            return $this->getPos($node['right'],1);
+            return $this->getPos($node['right'],2);
         }elseif($r_height==$l_height){
             $is_full=$this->isFull($node);
             if($is_full){ //满二叉树 最左边
@@ -107,9 +108,34 @@ class Tree implements \ArrayAccess{
             }
             //非完全二叉树 ROOT左边
             return $this->getPos($node['left'],2);
+        }else{
+            return $this->getPos($node['left'],2);
         }
 
     }
+    /**
+     * 获取公排接点
+     * @param  Node $node   节点的实例
+     * @return Node 新节点插入的父节点
+     */
+    private function naturalPos($node){
+        if(is_null($node['left'])||is_null($node['right'])){
+            return $node;
+        }
+        $l_height=$this->getMinHeight($node['left']);
+        $r_height=$this->getMinHeight($node['right']);
+        if($r_height<$l_height){
+            return $this->naturalPos($node['right']);
+        }
+        return $this->naturalPos($node['left']);
+
+    }
+    /**
+     * 获取弱区接点
+     * @param  Node $node   节点的实例
+     * @param  integer $type 参考: $this->insertable();
+     * @return Node 新节点插入的父节点
+     */
     private function getPos($node,$type=1){
         if($type==1){ //最左边
             if(is_null($node['left'])){
@@ -143,42 +169,6 @@ class Tree implements \ArrayAccess{
                 }
             }
 
-        }
-    }
-    function insertable1($node,$natural=false,$rootNode=null){
-        if(is_null($node)&&is_null($this->root)){
-            return;
-        }
-        if(is_null($node['left'])||is_null($node['right'])){
-            return $node;
-        }
-        if(is_null($rootNode)){ // 首次会执行该条件
-            $rootNode=$node;
-        }
-        $l_height=0;
-        $r_height=0;
-        if($natural){
-            $l_height=$this->getMinHeight($node['left']);
-            $r_height=$this->getMinHeight($node['right']);
-        }else{
-            $l_height=$this->getHeight($node['left']);
-            $r_height=$this->getHeight($node['right']);
-        }
-        if($r_height<$l_height){
-            return $this->insertable($node['right'],$natural,$rootNode);
-        }elseif($r_height==$l_height){
-            if($natural){
-                return $this->insertable($node['left'],$natural,$rootNode);
-            }
-            $is_full=$this->isFull($rootNode);
-            if($is_full){
-                return $this->insertable($node['left'],$natural,$rootNode);
-            }
-            $isComplete=$this->isComplete($rootNode);
-            if($isComplete){
-                return $this->insertable($node['right'],$natural,$rootNode);
-            }
-            return $this->insertable($node['left'],$natural,$rootNode);
         }
     }
     /**
@@ -442,16 +432,16 @@ class Tree implements \ArrayAccess{
             $options['sort']=false;
         }
         $nbsp='&nbsp;';
-        foreach($array as $v){
-            if($v[$pidKey]==$pid){
+    	foreach($array as $v){
+    		if($v[$pidKey]==$pid){
                 $v['_level']=$level;
-                $v['_prefix']=str_pad('',$level*strlen($nbsp)*8,$nbsp);
-                $data[]=$v;
+    			$v['_prefix']=str_pad('',$level*strlen($nbsp)*8,$nbsp);
+    			$data[]=$v;
                 $options[$pidKey]=$v['id'];
                 $options['level']++;
-                self::preSort($array,$data,$options,false);
-            }
-        }
+    			self::preSort($array,$data,$options,false);
+    		}
+    	}
     }
 
     /**
