@@ -32,10 +32,10 @@ class Tree implements \ArrayAccess{
             });
             $options['sort']=false;
         }
-    	foreach($array as $v){
-    		if($v[$pidKey]==$pid){
+        foreach($array as $v){
+            if($v[$pidKey]==$pid){
                 $v['_level']=$level;
-    			$node=new Node($v);
+                $node=new Node($v);
                 if(is_null($parent)){
                     $this->root=$node;
                 }elseif(is_null($parent['left'])){
@@ -46,9 +46,9 @@ class Tree implements \ArrayAccess{
                     $parent['right']=$node;
                 }
                 $options[$pidKey]=$v['id'];
-    			$this->init($array,$options,$node,false);
-    		}
-    	}
+                $this->init($array,$options,$node,false);
+            }
+        }
     }
     /**
      * 插入新节点(公排|弱区)
@@ -92,8 +92,10 @@ class Tree implements \ArrayAccess{
         if($natural){
             return $this->naturalPos($node);
         }
-        $l_height=$this->getHeight($node['left']);
-        $r_height=$this->getHeight($node['right']);
+        // $l_height=$this->getHeight($node['left']);
+        // $r_height=$this->getHeight($node['right']);
+        $l_height=$this->getCount($node['left']);
+        $r_height=$this->getCount($node['right']);
 
         if($r_height<$l_height){
             return $this->getPos($node['right'],2);
@@ -114,7 +116,7 @@ class Tree implements \ArrayAccess{
 
     }
     /**
-     * 获取公排接点
+     * 获取公排节点
      * @param  Node $node   节点的实例
      * @return Node 新节点插入的父节点
      */
@@ -131,7 +133,7 @@ class Tree implements \ArrayAccess{
 
     }
     /**
-     * 获取弱区接点
+     * 获取弱区节点
      * @param  Node $node   节点的实例
      * @param  integer $type 参考: $this->insertable();
      * @return Node 新节点插入的父节点
@@ -259,6 +261,21 @@ class Tree implements \ArrayAccess{
             return 0;
         }
         return min($this->getMinHeight($node['left']),$this->getMinHeight($node['right']))+1;
+    }
+    /**
+     * 获取节点数
+     * @param  Node $node 节点的实例
+     * @return integer
+     */
+    function getCount($node){
+        if(is_null($node)){
+            return 0;
+        }
+        $count=0;
+        $this->preOrder($node,function()use(&$count){
+            $count++;
+        });
+        return $count;
     }
     /**
      * 设置一个节点
@@ -432,16 +449,16 @@ class Tree implements \ArrayAccess{
             $options['sort']=false;
         }
         $nbsp='&nbsp;';
-    	foreach($array as $v){
-    		if($v[$pidKey]==$pid){
+        foreach($array as $v){
+            if($v[$pidKey]==$pid){
                 $v['_level']=$level;
-    			$v['_prefix']=str_pad('',$level*strlen($nbsp)*8,$nbsp);
-    			$data[]=$v;
+                $v['_prefix']=str_pad('',$level*strlen($nbsp)*8,$nbsp);
+                $data[]=$v;
                 $options[$pidKey]=$v['id'];
                 $options['level']++;
-    			self::preSort($array,$data,$options,false);
-    		}
-    	}
+                self::preSort($array,$data,$options,false);
+            }
+        }
     }
 
     /**
